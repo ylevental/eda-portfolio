@@ -136,10 +136,8 @@ eda-portfolio/
     ├── 555_astable.cir         ← pre-layout Ngspice simulation
     ├── images/
     │   ├── sim_cap_output.svg
-    │   ├── schematic.png       ← auto-generated schematic
-    │   ├── board_top.png       ← routed board, top copper
-    │   ├── board_bot.png       ← routed board, bottom copper
-    │   └── drc_pass.png        ← DRC results (0 errors)
+    │   ├── 555_Timer_Astable_Schematics.pdf       ← auto-generated schematic
+    │   └── 555_Timer_Astable_Board.pdf        ← Routed board (0 errors)
     └── docs/
         ├── theory.md
         └── build_guide.md      ← technical deep-dive on generation
