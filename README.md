@@ -137,7 +137,7 @@ eda-portfolio/
     ├── images/
     │   ├── sim_cap_output.svg
     │   ├── 555_Timer_Astable_Schematics.pdf       ← auto-generated schematic
-    │   └── 555_Timer_Astable_Board.pdf        ← Routed board (0 errors)
+    │   └── 555_Timer_Astable_Board.pdf            ← Routed board (0 errors)
     └── docs/
         ├── theory.md
         └── build_guide.md      ← technical deep-dive on generation
