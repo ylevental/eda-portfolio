@@ -1,7 +1,8 @@
 # Open-Source EDA Portfolio
 
-A collection of beginner-friendly electronics design projects built with free and
-open-source EDA tools on Fedora Linux (KDE).
+A collection of electronics design projects built with free and open-source
+EDA tools on Fedora Linux (KDE). The projects progress from basic simulation
+through schematic capture to programmatic PCB generation with automated routing.
 
 ## Projects
 
@@ -9,7 +10,7 @@ open-source EDA tools on Fedora Linux (KDE).
 |---|---------|------|--------|-------------|
 | 1 | [RC Low-Pass Filter](ngspice-rc-filter/) | Ngspice | Analog | AC sweep analysis with Bode magnitude and phase plots |
 | 2 | [Inverting Op-Amp Amplifier](qucs-s-opamp-amplifier/) | Qucs-S + Ngspice | Analog | Classic inverting amplifier with transient and AC analysis |
-| 3 | [555 Timer Astable PCB](librepcb-555-timer/) | LibrePCB | Mixed-Signal | PCB layout for a blinking LED circuit using the 555 timer IC |
+| 3 | [555 Timer Astable PCB](librepcb-555-timer/) | LibrePCB + Python | PCB Design | Programmatic PCB generation — schematic, netlist, board layout, and two-layer routing all generated from Python scripts |
 
 ### Preview
 
@@ -25,17 +26,50 @@ open-source EDA tools on Fedora Linux (KDE).
 
 ![555 Timer Sim](librepcb-555-timer/images/sim_cap_output.svg)
 
+**555 Timer — Board Layout (DRC: 0 errors):**
+
+![555 Board](librepcb-555-timer/images/555_Timer_Astable_Board.pdf)
+
+## Project Highlights
+
+### Ngspice RC Filter
+Straightforward SPICE simulation demonstrating AC sweep, Bode plots, and
+step response. Good introduction to command-line EDA workflows.
+
+### Qucs-S Op-Amp
+GUI-based schematic capture with Ngspice backend. Covers transient analysis,
+AC frequency response, and comparison against the ideal gain formula
+(G = −R_f / R_in).
+
+### LibrePCB 555 Timer (Programmatic)
+The flagship project. Two Python scripts generate a complete LibrePCB project
+from scratch — no manual GUI interaction:
+
+- `generate_555.py` produces the full project: circuit netlist (7 nets,
+  14 components), schematic with all symbols wired, board with footprints
+  placed on a 150×100mm PCB, ground plane, and project-local library
+  elements for the NE555 and a THT bipolar capacitor.
+- `simple_route6.py` routes all traces using a two-layer geometric algorithm
+  with vias, mathematically verified to have zero crossing violations.
+
+This required reverse-engineering LibrePCB's undocumented S-expression file
+format, resolving ~50 UUID dependency chains across library elements, and
+solving the graph planarity problem inherent in the 555 timer's netlist.
+
 ## Tools & Versions
 
-All tools were installed on **Fedora 43 (KDE Plasma)**:
+All tools installed on **Fedora 43 (KDE Plasma)**:
 
 ```bash
-# Install simulation tools
+# Simulation tools
 sudo dnf install ngspice qucs-s
 
-# Install PCB design tool
+# PCB design tool
 flatpak install flathub org.librepcb.LibrePCB
 ```
+
+The LibrePCB project generation requires only Python 3.6+ (no additional
+packages).
 
 ## Running the Projects
 
@@ -52,10 +86,23 @@ ngspice rc_lowpass.cir
 2. **File → Open** → select `qucs-s-opamp-amplifier/inverting_amp.sch`
 3. Press **F2** or click **Simulate** to run
 
-### LibrePCB (GUI)
+### LibrePCB 555 Timer (Programmatic)
 
-1. Open LibrePCB
-2. Follow the step-by-step recreation guide in `librepcb-555-timer/docs/`
+```bash
+cd librepcb-555-timer/
+
+# Generate the full project
+python3 generate_555.py
+
+# Route the board
+python3 simple_route6.py
+
+# Open in LibrePCB and run DRC — zero errors
+flatpak run org.librepcb.LibrePCB
+```
+
+Requires LibrePCB with official libraries downloaded and workspace at
+`~/LibrePCB-Workspace`.
 
 ## Repository Structure
 
@@ -64,8 +111,8 @@ eda-portfolio/
 ├── README.md
 ├── ngspice-rc-filter/
 │   ├── README.md
-│   ├── rc_lowpass.cir          ← Ngspice netlist (run directly)
-│   ├── rc_lowpass_step.cir     ← Step response variant
+│   ├── rc_lowpass.cir
+│   ├── rc_lowpass_step.cir
 │   ├── images/
 │   │   ├── bode_magnitude.svg
 │   │   ├── bode_phase.svg
@@ -74,8 +121,8 @@ eda-portfolio/
 │       └── theory.md
 ├── qucs-s-opamp-amplifier/
 │   ├── README.md
-│   ├── inverting_amp.sch       ← Qucs-S schematic (open in Qucs-S)
-│   ├── inverting_amp.cir       ← Ngspice netlist (standalone verification)
+│   ├── inverting_amp.sch
+│   ├── inverting_amp.cir
 │   ├── images/
 │   │   ├── ac_magnitude.svg
 │   │   ├── ac_phase.svg
@@ -84,12 +131,18 @@ eda-portfolio/
 │       └── theory.md
 └── librepcb-555-timer/
     ├── README.md
-    ├── 555_astable.cir         ← Ngspice pre-layout simulation
+    ├── generate_555.py         ← generates full LibrePCB project
+    ├── simple_route6.py        ← two-layer geometric router
+    ├── 555_astable.cir         ← pre-layout Ngspice simulation
     ├── images/
-    │   └── sim_cap_output.svg
+    │   ├── sim_cap_output.svg
+    │   ├── schematic.png       ← auto-generated schematic
+    │   ├── board_top.png       ← routed board, top copper
+    │   ├── board_bot.png       ← routed board, bottom copper
+    │   └── drc_pass.png        ← DRC results (0 errors)
     └── docs/
         ├── theory.md
-        └── build_guide.md
+        └── build_guide.md      ← technical deep-dive on generation
 ```
 
 ## License
@@ -98,4 +151,4 @@ This portfolio is released under the [MIT License](LICENSE).
 
 ## Author
 
-Yuval Levental — [LinkedIn](https://www.linkedin.com) · [GitHub](https://github.com)
+Yuval Levental — [LinkedIn](https://www.linkedin.com/in/yuval-levental) · [GitHub](https://github.com/ylevental)

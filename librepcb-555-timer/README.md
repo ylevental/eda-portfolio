@@ -1,154 +1,186 @@
-# Open-Source EDA Portfolio
+# 555 Timer Astable Multivibrator — Programmatic LibrePCB Generation
 
-A collection of electronics design projects built with free and open-source
-EDA tools on Fedora Linux (KDE). The projects progress from basic simulation
-through schematic capture to programmatic PCB generation with automated routing.
+A complete 555 timer blinking LED PCB generated entirely from Python scripts.
+No manual EDA interaction — the scripts produce a full LibrePCB project with
+schematic, circuit netlist, component library, board layout, ground plane,
+and routed traces that pass DRC with zero errors.
 
-## Projects
+## What Makes This Different
 
-| # | Project | Tool | Domain | Description |
-|---|---------|------|--------|-------------|
-| 1 | [RC Low-Pass Filter](ngspice-rc-filter/) | Ngspice | Analog | AC sweep analysis with Bode magnitude and phase plots |
-| 2 | [Inverting Op-Amp Amplifier](qucs-s-opamp-amplifier/) | Qucs-S + Ngspice | Analog | Classic inverting amplifier with transient and AC analysis |
-| 3 | [555 Timer Astable PCB](librepcb-555-timer/) | LibrePCB + Python | PCB Design | Programmatic PCB generation — schematic, netlist, board layout, and two-layer routing all generated from Python scripts |
+Most EDA tutorials walk through GUI clicks. This project generates the entire
+LibrePCB project programmatically — reverse-engineering the `.lp` S-expression
+file format, extracting UUIDs from installed libraries, and computing trace
+geometry that provably avoids all clearance violations.
 
-### Preview
+Key technical challenges solved:
 
-**RC Low-Pass Filter — Bode Magnitude:**
+- **UUID dependency resolution** — every LibrePCB element references others by
+  UUID. The generator extracts and maps ~50 UUIDs across components, symbols,
+  devices, packages, pads, pins, and signals.
+- **Project-local library elements** — the NE555 timer and a THT bipolar
+  capacitor device don't exist in the standard library, so the scripts generate
+  them from scratch with correct signal-to-pad mappings.
+- **Two-layer routing with via insertion** — the 555 netlist is non-planar
+  (provably impossible to route on a single copper layer). The router uses
+  top-copper stubs with vias to bottom-copper corridors, with mathematically
+  verified zero-crossing geometry.
 
-![Bode Magnitude](ngspice-rc-filter/images/bode_magnitude.svg)
+## Circuit
 
-**Inverting Op-Amp — Transient Response:**
-
-![Op-Amp Transient](qucs-s-opamp-amplifier/images/transient.svg)
-
-**555 Timer — Capacitor Charge/Discharge and Output:**
-
-![555 Timer Sim](librepcb-555-timer/images/sim_cap_output.svg)
-
-**555 Timer — Board Layout (DRC: 0 errors):**
-
-![555 Board](librepcb-555-timer/images/555_Timer_Astable_Board.pdf)
-
-## Project Highlights
-
-### Ngspice RC Filter
-Straightforward SPICE simulation demonstrating AC sweep, Bode plots, and
-step response. Good introduction to command-line EDA workflows.
-
-### Qucs-S Op-Amp
-GUI-based schematic capture with Ngspice backend. Covers transient analysis,
-AC frequency response, and comparison against the ideal gain formula
-(G = −R_f / R_in).
-
-### LibrePCB 555 Timer (Programmatic)
-The flagship project. Two Python scripts generate a complete LibrePCB project
-from scratch — no manual GUI interaction:
-
-- `generate_555.py` produces the full project: circuit netlist (7 nets,
-  14 components), schematic with all symbols wired, board with footprints
-  placed on a 150×100mm PCB, ground plane, and project-local library
-  elements for the NE555 and a THT bipolar capacitor.
-- `simple_route6.py` routes all traces using a two-layer geometric algorithm
-  with vias, mathematically verified to have zero crossing violations.
-
-This required reverse-engineering LibrePCB's undocumented S-expression file
-format, resolving ~50 UUID dependency chains across library elements, and
-solving the graph planarity problem inherent in the 555 timer's netlist.
-
-## Tools & Versions
-
-All tools installed on **Fedora 43 (KDE Plasma)**:
-
-```bash
-# Simulation tools
-sudo dnf install ngspice qucs-s
-
-# PCB design tool
-flatpak install flathub org.librepcb.LibrePCB
+```
+    VCC (+5V)
+     │
+    [R1 10kΩ]
+     │
+     ├────── pin 7 (DISCH)
+     │
+    [R2 47kΩ]          ┌──────────┐
+     │                 │  NE555   │
+     ├── pin 2 (TRIG)  │          │
+     ├── pin 6 (THRESH) │   pin 3 ├──[R3 470Ω]──LED──GND
+     │                 │          │
+    [C1 10µF]          │   pin 8 ├── VCC
+     │                 │   pin 1 ├── GND
+    GND                │   pin 5 ├──[C2 10nF]──GND
+                       └──────────┘
 ```
 
-The LibrePCB project generation requires only Python 3.6+ (no additional
-packages).
+## Bill of Materials
 
-## Running the Projects
+| Ref | Value   | Package          | Description              |
+|-----|---------|------------------|--------------------------|
+| U1  | NE555   | DIP-8            | Timer IC                 |
+| R1  | 10 kΩ   | Axial (THT 0207) | Charge resistor (high)   |
+| R2  | 47 kΩ   | Axial (THT 0207) | Charge resistor (low)    |
+| R3  | 470 Ω   | Axial (THT 0207) | LED current limiter      |
+| C1  | 10 µF   | Radial THT       | Timing capacitor         |
+| C2  | 10 nF   | Radial THT       | Decoupling (pin 5)       |
+| D1  | LED     | 5mm THT          | Output indicator (red)   |
+| J1  | 2-pin   | Pin header 1x02  | Power input (5V + GND)   |
 
-### Ngspice (CLI)
+All components are through-hole for easy assembly and because THT pads
+exist on both copper layers (eliminating the need for vias at pad locations).
+
+## Timing
+
+| Parameter  | Formula                    | Value       |
+|------------|----------------------------|-------------|
+| T_high     | 0.693 × (R1 + R2) × C1    | **0.395 s** |
+| T_low      | 0.693 × R2 × C1           | **0.326 s** |
+| Period     | T_high + T_low             | **0.721 s** |
+| Frequency  | 1 / Period                 | **≈ 1.39 Hz** |
+| Duty cycle | T_high / Period            | **≈ 54.8%** |
+
+The LED blinks at roughly 1.4 Hz — easily visible.
+
+## Pre-Layout Simulation
+
+Verify timing with Ngspice before generating the PCB:
 
 ```bash
-cd ngspice-rc-filter/
-ngspice rc_lowpass.cir
+ngspice 555_astable.cir
 ```
 
-### Qucs-S (GUI)
+![555 Timer Simulation](images/sim_cap_output.svg)
 
-1. Open Qucs-S
-2. **File → Open** → select `qucs-s-opamp-amplifier/inverting_amp.sch`
-3. Press **F2** or click **Simulate** to run
+## Usage
 
-### LibrePCB 555 Timer (Programmatic)
+### Generate the full project
 
 ```bash
-cd librepcb-555-timer/
-
-# Generate the full project
 python3 generate_555.py
+```
 
-# Route the board
+This creates a complete LibrePCB project at
+`~/LibrePCB-Workspace/projects/555_Timer_Astable/` including:
+
+- Project metadata and settings
+- Circuit netlist with 7 nets and 14 component instances
+- Schematic with all symbols placed and wired
+- Board with all footprints placed on a 150×100mm PCB
+- Ground plane on bottom copper
+- Project-local NE555 component/device and THT bipolar capacitor device
+- All required library elements copied into the project
+
+### Route the board
+
+```bash
 python3 simple_route6.py
-
-# Open in LibrePCB and run DRC — zero errors
-flatpak run org.librepcb.LibrePCB
 ```
 
-Requires LibrePCB with official libraries downloaded and workspace at
-`~/LibrePCB-Workspace`.
+This adds routed traces to the board using a two-layer geometric router:
 
-## Repository Structure
+- Top copper: short horizontal stubs from pads to approach columns
+- Vias at column points (far from all component pads)
+- Bottom copper: corridors connecting via columns
+- Ground plane on bottom copper auto-connects all GND pads
 
-```
-eda-portfolio/
-├── README.md
-├── ngspice-rc-filter/
-│   ├── README.md
-│   ├── rc_lowpass.cir
-│   ├── rc_lowpass_step.cir
-│   ├── images/
-│   │   ├── bode_magnitude.svg
-│   │   ├── bode_phase.svg
-│   │   └── step_response.svg
-│   └── docs/
-│       └── theory.md
-├── qucs-s-opamp-amplifier/
-│   ├── README.md
-│   ├── inverting_amp.sch
-│   ├── inverting_amp.cir
-│   ├── images/
-│   │   ├── ac_magnitude.svg
-│   │   ├── ac_phase.svg
-│   │   └── transient.svg
-│   └── docs/
-│       └── theory.md
-└── librepcb-555-timer/
-    ├── README.md
-    ├── generate_555.py         ← generates full LibrePCB project
-    ├── simple_route6.py        ← two-layer geometric router
-    ├── 555_astable.cir         ← pre-layout Ngspice simulation
-    ├── images/
-    │   ├── sim_cap_output.svg
-    │   ├── schematic.png       ← auto-generated schematic
-    │   ├── board_top.png       ← routed board, top copper
-    │   ├── board_bot.png       ← routed board, bottom copper
-    │   └── drc_pass.png        ← DRC results (0 errors)
-    └── docs/
-        ├── theory.md
-        └── build_guide.md      ← technical deep-dive on generation
-```
+Open the project in LibrePCB and run DRC to verify — zero errors.
 
-## License
+### Prerequisites
 
-This portfolio is released under the [MIT License](LICENSE).
+- Python 3.6+
+- LibrePCB 1.2+ installed with official libraries downloaded
+- Workspace at `~/LibrePCB-Workspace` (default location)
 
-## Author
+## PCB Design
 
-Yuval Levental — [LinkedIn](https://www.linkedin.com/in/yuval-levental) · [GitHub](https://github.com/ylevental)
+**Board size:** 150 × 100 mm
+
+**Layer stackup:** 2-layer (top copper + bottom copper ground plane)
+
+**Routing strategy:** The 555 timer's netlist is non-planar — nets like
+THRESH_TRIG connect pins on both sides of the DIP-8 IC, creating crossing
+connections that cannot be resolved on a single copper layer. The router
+solves this with a two-layer approach:
+
+- Each net gets unique approach column X-coordinates at the board edges
+  (left: x=8, 15, 22 — right: x=128, 132, 136, 142)
+- Each net gets a unique corridor Y-coordinate on bottom copper
+  (y=12, 20, 80, 88, 96)
+- Top-copper stubs run horizontally from pads to vias at the columns
+- Bottom-copper corridors run horizontally between column vias
+- Vertical column segments on bottom copper connect vias to corridors
+
+This geometry was verified to have zero crossings between any column
+and any corridor from a different net.
+
+## Screenshots
+
+| File | Description |
+|------|-------------|
+| `images/555_Timer_Astable_Schematics.pdf` | Complete schematic with all nets wired |
+| `images/555_Timer_Astable_Board.pdf` | Board layout |
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `generate_555.py` | Generates the complete LibrePCB project from scratch |
+| `simple_route6.py` | Two-layer geometric router with via insertion |
+| `555_astable.cir` | Pre-layout Ngspice simulation |
+| `docs/build_guide.md` | Technical walkthrough of the generation approach |
+| `docs/theory.md` | 555 timer operating theory |
+
+## What I Learned
+
+This project started as a simple EDA portfolio exercise and became a deep
+dive into PCB design fundamentals:
+
+- **LibrePCB's S-expression file format** — undocumented, reverse-engineered
+  by inspecting manually-created projects
+- **UUID dependency chains** — components reference symbols, devices reference
+  packages, signals map to pads through multiple indirection layers
+- **Graph planarity** — the 555 netlist cannot be embedded in a plane without
+  crossings, requiring two copper layers
+- **Clearance constraints** — DIP-8 pins are 2.54mm apart, so vertical traces
+  near the IC always violate clearance to adjacent pins. The solution is
+  horizontal approach from offset columns.
+- **Ground planes** — through-hole pads connect to both layers automatically,
+  so GND routing is "free" with a bottom-layer ground plane
+
+## References
+
+- [LibrePCB Documentation](https://librepcb.org/docs/)
+- [NE555 Datasheet (TI)](https://www.ti.com/product/NE555)
+- Horowitz & Hill, *The Art of Electronics*, Ch. 10
