@@ -1,0 +1,76 @@
+* ============================================================
+* Inverting Op-Amp Amplifier — Ngspice Verification
+* ============================================================
+* Tool:    Ngspice (standalone verification for Qucs-S project)
+* Author:  Yuval Levental
+* License: MIT
+*
+* Schematic:
+*
+*              Rf (10kΩ)
+*          ┌───[RRRR]───┐
+*          │             │
+*  Vin ──[R1 1kΩ]──┬──(−)    ╲
+*                   │     OpAmp >── Vout
+*               GND─┤──(+)    ╱
+*                   │
+*                  GND
+*
+* Ideal gain:  Av = −Rf / R1 = −10  (20 dB)
+* ============================================================
+
+* --- Subcircuit: Ideal Op-Amp ---
+* (in+ in- out)
+.subckt ideal_opamp inp inn out
+  Rin  inp inn  1G
+  Egain out 0  inp inn  1e6
+  Rout out 0   1
+.ends
+
+* --- Circuit ---
+
+Vin  in  0  DC 0  AC 1  SIN(0 0.1 1k)
+
+* Input resistor
+R1   in   inv   1k
+
+* Feedback resistor
+Rf   inv  out   10k
+
+* Op-amp: non-inverting input (+) grounded
+Xop  0 inv out  ideal_opamp
+
+* --- AC Analysis ---
+.ac dec 100 10 10Meg
+
+* --- Transient Analysis ---
+.tran 10u 5m
+
+* --- Control Block ---
+.control
+  run
+
+  echo "========================================"
+  echo "  Inverting Op-Amp Amplifier"
+  echo "  R1 = 1 kOhm, Rf = 10 kOhm"
+  echo "  Expected gain = -10 (20 dB)"
+  echo "========================================"
+
+  * Switch to AC dataset for frequency-domain plots
+  setplot ac1
+
+  * Measure midband gain
+  meas ac gain_dB find vdb(out) at=1k
+  meas ac phase_deg find vp(out) at=1k
+
+  * Bode plots
+  plot vdb(out) title 'Inverting Amplifier — Magnitude [dB]'
+  plot vp(out)*180/PI title 'Inverting Amplifier — Phase [deg]'
+
+  * Switch to transient dataset for time-domain plot
+  setplot tran1
+  plot v(in) v(out) title 'Inverting Amplifier — Transient'
+
+.endc
+
+.end

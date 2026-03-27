@@ -1,0 +1,103 @@
+* ============================================================
+* 555 Timer — Astable Multivibrator (Pre-Layout Simulation)
+* ============================================================
+* Tool:    Ngspice
+* Author:  Yuval Levental
+* License: MIT
+*
+* An astable (free-running) oscillator using the 555 timer IC.
+* The output toggles between HIGH and LOW, driving an LED.
+*
+* Schematic:
+*
+*     VCC (+5V)
+*      │
+*     [R1 10kΩ]
+*      │
+*      ├───── pin 7 (DISCH)
+*      │
+*     [R2 47kΩ]
+*      │
+*      ├───── pin 2 (TRIG) + pin 6 (THRESH)
+*      │
+*     [C1 10µF]
+*      │
+*     GND
+*
+*     pin 3 (OUT) ──[R3 470Ω]──LED──GND
+*
+* Timing:
+*   T_high = 0.693 · (R1 + R2) · C1  = 0.395 s
+*   T_low  = 0.693 · R2 · C1         = 0.326 s
+*   Period = T_high + T_low           = 0.721 s
+*   Freq   = 1 / Period               ≈ 1.39 Hz
+*   Duty   = T_high / Period          ≈ 54.8%
+*
+* Note: This uses a behavioral model of the 555 timer for
+* simulation. The actual PCB uses a physical NE555 IC.
+* ============================================================
+
+* --- Power Supply ---
+VCC  vcc  0  DC 5
+
+* --- 555 Timer Behavioral Model ---
+* SR latch with hysteresis between VCC/3 and 2*VCC/3.
+* An RC pair (R_mem + C_mem) holds the latch state between thresholds.
+*   SET   (output HIGH) when cap < VCC/3
+*   RESET (output LOW)  when cap > 2*VCC/3
+*   HOLD  when cap is between thresholds
+
+* Timing resistors
+R1   vcc   node_a   10k
+R2   node_a  cap_node  47k
+
+* Timing capacitor
+C1   cap_node  0  10u  IC=0
+
+* SR latch: behavioral comparator with RC memory for state hold
+B_latch  latch_raw  0  V = { V(cap_node) < V(vcc)/3 ? V(vcc) : (V(cap_node) > V(vcc)*2/3 ? 0 : V(latch_filt)) }
+R_mem    latch_raw  latch_filt  100
+C_mem    latch_filt 0  10p  IC=5
+
+* Output buffer
+B_out  out_555  0  V = { V(latch_filt) > 2.5 ? V(vcc) : 0 }
+
+* Discharge switch: ON when output is LOW (inverted control)
+B_dinv   dinv  0  V = { V(latch_filt) > 2.5 ? 0 : V(vcc) }
+S_disch  node_a  0  dinv  0  SW_MODEL OFF
+.model SW_MODEL SW(Vt=2.5 Vh=0.1 Ron=10 Roff=1G)
+
+* --- LED Circuit ---
+R3   out_555  led_a   470
+D1   led_a    0       LED_MODEL
+.model LED_MODEL D(IS=1e-20 N=1.8 RS=5 BV=5)
+
+* --- Analysis ---
+.tran 1m 5s UIC
+
+* --- Control Block ---
+.control
+  run
+
+  echo "========================================"
+  echo "  555 Timer Astable Multivibrator"
+  echo "  Expected freq ~ 1.39 Hz"
+  echo "  Expected duty ~ 54.8%"
+  echo "========================================"
+
+  * Measure oscillation period
+  meas tran t_rise1 when v(cap_node) = 1.667 rise = 2
+  meas tran t_rise2 when v(cap_node) = 1.667 rise = 3
+  let period = t_rise2 - t_rise1
+  let freq = 1 / period
+  echo "Measured period and frequency:"
+  print period
+  print freq
+
+  * Plot capacitor voltage and output
+  * Screenshot this window → images/sim_cap_output.png
+  plot v(cap_node) v(out_555) title '555 Astable — Cap Voltage and Output'
+
+.endc
+
+.end

@@ -1,0 +1,57 @@
+* ============================================================
+* RC Low-Pass Filter — Step Response (Transient Analysis)
+* ============================================================
+* Tool:    Ngspice
+* Author:  Yuval Levental
+* License: MIT
+*
+* Same RC filter as rc_lowpass.cir, but driven with a voltage
+* step to observe the exponential charging behavior.
+*
+* Time constant:  τ = R · C = 1000 · 10e-9 = 10 µs
+* Rise to ~63.2% of final value at t = τ
+* Rise to ~95%   of final value at t = 3τ = 30 µs
+* Rise to ~99.3% of final value at t = 5τ = 50 µs
+* ============================================================
+
+* --- Circuit Description ---
+
+* Pulse source: 0 → 1 V step at t = 5 µs
+* PULSE(V1  V2  Tdelay  Trise  Tfall  Ton      Period)
+Vin  in  0  PULSE(0 1 5u 1n 1n 200u 400u)
+
+R1   in  out  1k
+C1   out  0   10n
+
+* --- Analysis ---
+
+* Transient: 0.1 µs step size, 100 µs total
+.tran 0.1u 100u
+
+* --- Control Block ---
+
+.control
+  run
+
+  echo "======================================"
+  echo "  RC Low-Pass Filter — Step Response"
+  echo "  tau = R*C = 10 us"
+  echo "======================================"
+
+  * Measure the time to reach 63.2% of 1 V
+  meas tran t_tau when v(out) = 0.632
+
+  * Measure 10%-90% rise time
+  meas tran t_10 when v(out) = 0.1
+  meas tran t_90 when v(out) = 0.9
+  let risetime = t_90 - t_10
+  echo "10%-90% rise time:"
+  print risetime
+
+  * Plot input and output together
+  * Screenshot this window → images/step_response.png
+  plot v(in) v(out) title 'RC Low-Pass Filter — Step Response'
+
+.endc
+
+.end

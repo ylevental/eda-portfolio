@@ -1,0 +1,100 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+  width="100%" height="100%" viewBox="0 0 1024 768"
+  style="fill: none; font-family: Helvetica;
+ font: Helvetica;
+">
+
+<!-- Creator: NGspice -->
+
+<rect x="0" y="0" width="1024" height="768" fill="black" stroke="none"/>
+<text stroke="none" fill="white" font-size="16" x="358" y="752">
+frequency
+</text>
+<text stroke="none" fill="white" font-size="16" x="10" y="16">
+ac1: Inverting Amplifier — Magnitude [dB]
+</text>
+<path stroke="white" d="M60 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="50" y="728">
+10
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M105 720l0 -672M131 720l0 -672M150 720l0 -672M164 720l0 -672M176 720l0 -672M186 720l0 -672M195 720l0 -672M203 720l0 -672"/>
+<path stroke="white" d="M210 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="195" y="728">
+100
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M255 720l0 -672M281 720l0 -672M300 720l0 -672M314 720l0 -672M326 720l0 -672M336 720l0 -672M345 720l0 -672M353 720l0 -672"/>
+<path stroke="white" d="M360 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="340" y="728">
+10^3
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M405 720l0 -672M431 720l0 -672M450 720l0 -672M464 720l0 -672M476 720l0 -672M486 720l0 -672M495 720l0 -672M503 720l0 -672"/>
+<path stroke="white" d="M510 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="490" y="728">
+10^4
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M555 720l0 -672M581 720l0 -672M600 720l0 -672M614 720l0 -672M626 720l0 -672M636 720l0 -672M645 720l0 -672M653 720l0 -672"/>
+<path stroke="white" d="M660 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="640" y="728">
+10^5
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M705 720l0 -672M731 720l0 -672M750 720l0 -672M764 720l0 -672M776 720l0 -672M786 720l0 -672M795 720l0 -672M803 720l0 -672"/>
+<path stroke="white" d="M810 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="790" y="728">
+10^6
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M855 720l0 -672M881 720l0 -672M900 720l0 -672M914 720l0 -672M926 720l0 -672M936 720l0 -672M945 720l0 -672M953 720l0 -672"/>
+<path stroke="white" d="M960 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="940" y="728">
+10^7
+</text>
+<text stroke="none" fill="white" font-size="16" x="614" y="752">
+Hz
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 720l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="728">
+18.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 636l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="644">
+18.5
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 552l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="560">
+19.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 468l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="476">
+19.5
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 384l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="392">
+20.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 300l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="308">
+20.5
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 216l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="224">
+21.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 132l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="140">
+21.5
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M60 48l900 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="56">
+22.0
+</text>
+<text stroke="none" fill="white" font-size="16" x="10" y="32">
+dB
+</text>
+<path stroke="red" d="M450 23l45 0"/>
+<text stroke="none" fill="white" font-size="16" x="505" y="32">
+vdb(out)
+</text>
+<path stroke="red" d="M60 384l900 0"/>
+</svg>

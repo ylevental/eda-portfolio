@@ -1,0 +1,68 @@
+* ============================================================
+* RC Low-Pass Filter — AC Sweep (Bode Plot)
+* ============================================================
+* Tool:    Ngspice
+* Author:  Yuval Levental
+* License: MIT
+*
+* A first-order passive RC low-pass filter.
+*
+* Schematic:
+*
+*     Vin ──[ R1 1kΩ ]──┬── Vout
+*                        │
+*                       [C1]
+*                       10nF
+*                        │
+*                       GND
+*
+* Cutoff frequency:
+*   fc = 1 / (2π · R · C)
+*      = 1 / (2π · 1000 · 10e-9)
+*      ≈ 15.92 kHz
+*
+* At fc the gain drops by −3 dB and phase shifts −45°.
+* Above fc the roll-off is −20 dB/decade (first-order).
+* ============================================================
+
+* --- Circuit Description ---
+
+* Independent AC voltage source: 1 V amplitude, 0 V DC offset
+Vin  in  0  DC 0  AC 1
+
+* Resistor: 1 kΩ
+R1   in  out  1k
+
+* Capacitor: 10 nF
+C1   out  0   10n
+
+* --- Analysis ---
+
+* AC sweep: decade spacing, 100 points/decade, from 100 Hz to 10 MHz
+.ac dec 100 100 10Meg
+
+* --- Control Block ---
+
+.control
+  run
+
+  echo "======================================"
+  echo "  RC Low-Pass Filter — Bode Plot"
+  echo "  R = 1 kOhm, C = 10 nF"
+  echo "  Expected fc = 15.92 kHz"
+  echo "======================================"
+
+  * Measure the −3 dB cutoff frequency
+  meas ac f3dB when vdb(out) = -3
+
+  * Plot magnitude in dB
+  * Screenshot this window → images/bode_magnitude.png
+  plot vdb(out) title 'RC Low-Pass Filter — Magnitude [dB]'
+
+  * Plot phase in degrees
+  * Screenshot this window → images/bode_phase.png
+  plot vp(out)*180/PI title 'RC Low-Pass Filter — Phase [deg]'
+
+.endc
+
+.end

@@ -1,0 +1,100 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+  width="100%" height="100%" viewBox="0 0 1024 768"
+  style="fill: none; font-family: Helvetica;
+ font: Helvetica;
+">
+
+<!-- Creator: NGspice -->
+
+<rect x="0" y="0" width="1024" height="768" fill="black" stroke="none"/>
+<text stroke="none" fill="white" font-size="16" x="358" y="752">
+frequency
+</text>
+<text stroke="none" fill="white" font-size="16" x="10" y="16">
+ac1: Inverting Amplifier — Phase [deg]
+</text>
+<path stroke="white" d="M70 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="60" y="728">
+10
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M114 720l0 -672M140 720l0 -672M158 720l0 -672M172 720l0 -672M184 720l0 -672M194 720l0 -672M202 720l0 -672M210 720l0 -672"/>
+<path stroke="white" d="M217 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="202" y="728">
+100
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M261 720l0 -672M287 720l0 -672M305 720l0 -672M319 720l0 -672M331 720l0 -672M341 720l0 -672M349 720l0 -672M357 720l0 -672"/>
+<path stroke="white" d="M364 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="344" y="728">
+10^3
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M408 720l0 -672M434 720l0 -672M452 720l0 -672M466 720l0 -672M478 720l0 -672M488 720l0 -672M496 720l0 -672M504 720l0 -672"/>
+<path stroke="white" d="M511 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="491" y="728">
+10^4
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M555 720l0 -672M581 720l0 -672M599 720l0 -672M613 720l0 -672M625 720l0 -672M635 720l0 -672M643 720l0 -672M651 720l0 -672"/>
+<path stroke="white" d="M658 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="638" y="728">
+10^5
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M702 720l0 -672M728 720l0 -672M746 720l0 -672M760 720l0 -672M772 720l0 -672M782 720l0 -672M790 720l0 -672M798 720l0 -672"/>
+<path stroke="white" d="M805 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="785" y="728">
+10^6
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M849 720l0 -672M875 720l0 -672M893 720l0 -672M907 720l0 -672M919 720l0 -672M929 720l0 -672M937 720l0 -672M945 720l0 -672"/>
+<path stroke="white" d="M952 720l0 -672"/>
+<text stroke="none" fill="white" font-size="16" x="932" y="728">
+10^7
+</text>
+<text stroke="none" fill="white" font-size="16" x="614" y="752">
+Hz
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 720l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="728">
+160.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 636l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="644">
+165.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 552l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="560">
+170.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 468l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="476">
+175.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 384l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="392">
+180.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 300l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="308">
+185.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 216l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="224">
+190.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 132l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="140">
+195.0
+</text>
+<path stroke="white" stroke-dasharray="1,2" d="M70 48l882 0"/>
+<text stroke="none" fill="white" font-size="16" x="18" y="56">
+200.0
+</text>
+<text stroke="none" fill="white" font-size="16" x="10" y="32">
+     
+</text>
+<path stroke="red" d="M441 23l44 0"/>
+<text stroke="none" fill="white" font-size="16" x="495" y="32">
+vp(out)*180/pi
+</text>
+<path stroke="red" d="M70 384l882 0"/>
+</svg>
